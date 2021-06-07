@@ -1,7 +1,5 @@
-use dbus::nonblock::{self, Proxy};
 use dbus_tokio::connection;
-use empress::{check_validity, Player};
-use std::time::Duration;
+use empress::Player;
 
 #[tokio::test]
 async fn test_init() -> Result<(), Box<dyn std::error::Error>> {
@@ -13,6 +11,7 @@ async fn test_init() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let player = Player::try_new("cmus", &conn).await?;
-    println!("{:?}", player.name);
+    println!("{:?}", player);
+
     Ok(())
 }

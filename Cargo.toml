@@ -8,5 +8,6 @@ edition = "2018"
 
 [dependencies]
 dbus = "0.9.2"
-tokio = { version = "1.6.1", features = ["full"] }
 dbus-tokio = "0.7.3"
+tokio = { version = "1.6.1", features = ["full"] }
+futures = "0.3.15"
