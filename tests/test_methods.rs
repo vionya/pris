@@ -11,7 +11,9 @@ async fn test_methods() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let mut player = Player::try_new("cmus", &conn).await?;
-    player.play_pause().await;
+    player
+        .seek_reverse(std::time::Duration::from_secs(15))
+        .await?;
 
     Ok(())
 }

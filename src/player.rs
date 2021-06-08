@@ -1,7 +1,10 @@
 #![allow(clippy::needless_lifetimes)]
 
 use crate::{methods, util};
-use dbus::nonblock::{Proxy, SyncConnection};
+use dbus::{
+    arg::{Append, Arg, Get, RefArg},
+    nonblock::{Proxy, SyncConnection},
+};
 use std::{error::Error, time::Duration};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -67,5 +70,49 @@ impl<'a, 'b> Player<'a, 'b> {
     /// Stops playback
     pub async fn stop(&mut self) {
         methods::stop(self).await.unwrap();
+    }
+
+    /// Retrieves a metadata property from the given player.
+    pub async fn get_metadata_property(&mut self, property: &str) -> Result<Box<dyn RefArg>> {
+        Ok(methods::get_metadata_property(self, property).await?)
+    }
+
+    /// Retrieves the value of an MPRIS property.
+    /// Available properties can be seen [here].
+    ///
+    /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
+    pub async fn get_property<T: for<'c> Get<'c> + 'static>(
+        &mut self,
+        property: &str,
+    ) -> Result<T> {
+        Ok(methods::get_property(self, property).await?)
+    }
+
+    /// Sets the value of a writable MPRIS property.
+    /// Available properties can be seen [here].
+    ///
+    /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
+    pub async fn set_property<T: Arg + Append>(&mut self, property: &str, value: T) -> Result<()> {
+        Ok(methods::set_property(self, property, value).await?)
+    }
+
+    /// Seeks the position of the active track.
+    pub async fn seek(&mut self, offset: Duration) -> Result<()> {
+        Ok(methods::seek(self, offset).await?)
+    }
+
+    /// Same as `seek`, but in reverse.
+    pub async fn seek_reverse(&mut self, offset: Duration) -> Result<()> {
+        Ok(methods::seek_reverse(self, offset).await?)
+    }
+
+    /// Sets the position of the current track, by microseconds.
+    pub async fn set_position(&mut self, position: i64) -> Result<()> {
+        Ok(methods::set_position(self, position).await?)
+    }
+
+    /// Opens a track by its URI.
+    pub async fn open_uri(&mut self, uri: &str) -> Result<()> {
+        Ok(methods::open_uri(self, uri).await?)
     }
 }
