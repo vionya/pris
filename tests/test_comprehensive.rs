@@ -1,15 +1,8 @@
-use dbus_tokio::connection;
-use empress::{EventManager, EventType, Player};
+use empress::{get_connection, EventManager, EventType, Player};
 
 #[tokio::test]
 async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
-    let (resource, conn) = connection::new_session_sync()?;
-
-    tokio::spawn(async {
-        let err = resource.await;
-        panic!("Lost connection to D-Bus: {}", err);
-    });
-
+    let conn = get_connection();
     let mut player = Player::try_new("cmus", &conn).await?;
     let mut manager = EventManager::new(&conn);
 
@@ -20,7 +13,9 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
         })
         .await?;
 
-    player.next().await;
+    player.play_pause().await;
+
+    println!("{:?}", player.get_metadata_property("xesam:title").await?);
     tokio::signal::ctrl_c().await?;
     manager.clear_callbacks().await?;
 

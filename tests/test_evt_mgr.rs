@@ -1,15 +1,8 @@
-use dbus_tokio::connection;
-use empress::{EventManager, EventType};
+use empress::{get_connection, EventManager, EventType};
 
 #[tokio::test]
 async fn test_evt_mgr() -> Result<(), Box<dyn std::error::Error>> {
-    let (resource, conn) = connection::new_session_sync()?;
-
-    tokio::spawn(async {
-        let err = resource.await;
-        panic!("Lost connection to D-Bus: {}", err);
-    });
-
+    let conn = get_connection();
     let mut manager = EventManager::new(&conn);
     let _incoming = manager
         .add_callback(EventType::PropertiesChanged, |msg, (source,): (String,)| {

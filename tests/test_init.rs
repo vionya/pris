@@ -1,15 +1,8 @@
-use dbus_tokio::connection;
-use empress::Player;
+use empress::{get_connection, Player};
 
 #[tokio::test]
 async fn test_init() -> Result<(), Box<dyn std::error::Error>> {
-    let (resource, conn) = connection::new_session_sync()?;
-
-    tokio::spawn(async {
-        let err = resource.await;
-        panic!("Lost connection to D-Bus: {}", err);
-    });
-
+    let conn = get_connection();
     let _player = Player::try_new("cmus", &conn).await?;
 
     Ok(())
