@@ -16,7 +16,7 @@ pub enum EventType {
     /// A list of all properties that will
     /// cause this to be emitted can be found
     /// [here]
-    /// 
+    ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
     PropertiesChanged,
     /// Emitted whenever the active track is seeked.
@@ -45,7 +45,7 @@ impl EventManager<'_> {
     /// # Errors
     /// Returns an `Err` if there is a failure in adding
     /// a match rule to the connection.
-    /// 
+    ///
     /// # Example
     /// ```
     /// let mut manager = EventManager::new(&connection);
@@ -80,7 +80,7 @@ impl EventManager<'_> {
     }
 
     /// Clears all registered callbacks from the manager.
-    /// 
+    ///
     /// # Errors
     /// Returns an `Err` if there is a failure in removing
     /// a match from the connection.

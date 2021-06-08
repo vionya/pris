@@ -1,7 +1,7 @@
 use crate::Player;
 use dbus::nonblock::stdintf::org_freedesktop_dbus::Properties;
 use dbus::{
-    arg::{Arg, Get, PropMap, RefArg, Append},
+    arg::{Append, Arg, Get, PropMap, RefArg},
     strings::Path,
 };
 use std::time::Duration;
