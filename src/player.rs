@@ -22,7 +22,7 @@ impl<'a, 'b> Player<'a, 'b> {
     /// # Errors
     /// Returns an `Err` if the provided player is invalid.
     pub async fn try_new(name: &'a str, conn: &'b SyncConnection) -> Result<Player<'a, 'b>> {
-        if !util::check_validity(name, conn).await? {
+        if !util::validate(name, conn).await? {
             return Err(Box::from("The provided player was invalid."));
         }
 

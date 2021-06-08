@@ -3,7 +3,7 @@ use std::{error::Error, time::Duration};
 
 const MPRIS_PREFIX: &str = "org.mpris.MediaPlayer2.";
 
-pub async fn check_validity(
+pub async fn validate(
     player_name: &str,
     conn: &SyncConnection,
 ) -> Result<bool, Box<dyn Error>> {
