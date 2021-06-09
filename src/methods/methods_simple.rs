@@ -2,7 +2,7 @@ use super::INTERFACE;
 use crate::{Player, Result};
 
 /// Skips to the next track
-pub async fn next(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn next(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "Next", ()).await?;
 
@@ -10,7 +10,7 @@ pub async fn next(player: &mut Player<'_, '_>) -> Result<()> {
 }
 
 /// Skips to the previous track
-pub async fn previous(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn previous(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "Previous", ()).await?;
 
@@ -18,7 +18,7 @@ pub async fn previous(player: &mut Player<'_, '_>) -> Result<()> {
 }
 
 /// Pauses the current track
-pub async fn pause(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn pause(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "Pause", ()).await?;
 
@@ -26,7 +26,7 @@ pub async fn pause(player: &mut Player<'_, '_>) -> Result<()> {
 }
 
 /// Starts or resumes the current track
-pub async fn play(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn play(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "Play", ()).await?;
 
@@ -34,7 +34,7 @@ pub async fn play(player: &mut Player<'_, '_>) -> Result<()> {
 }
 
 /// Resumes/starts or pauses the current track
-pub async fn play_pause(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn play_pause(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "PlayPause", ()).await?;
 
@@ -42,7 +42,7 @@ pub async fn play_pause(player: &mut Player<'_, '_>) -> Result<()> {
 }
 
 /// Stops playback
-pub async fn stop(player: &mut Player<'_, '_>) -> Result<()> {
+pub async fn stop(player: &mut Player<'_>) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "Stop", ()).await?;
 

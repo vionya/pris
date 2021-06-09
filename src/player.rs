@@ -3,31 +3,37 @@ use dbus::{
     arg::{Append, Arg, Get, RefArg},
     nonblock::{Proxy, SyncConnection},
 };
-use std::time::Duration;
+use std::{fmt::Display, time::Duration};
 
 /// A struct used to control an MPRIS player.
 #[derive(Clone)]
-pub struct Player<'a, 'b> {
-    pub name: &'a str,
-    pub conn: &'b SyncConnection,
+pub struct Player<'a> {
+    pub name: String,
+    pub conn: &'a SyncConnection,
 }
 
-impl<'a, 'b> Player<'a, 'b> {
+impl<'a> Player<'a> {
     /// Tries to create a new `Player` instance from a given name.
     ///
     /// # Errors
     /// Returns an `Err` if the provided player is invalid.
-    pub async fn try_new(name: &'a str, conn: &'b SyncConnection) -> Result<Player<'a, 'b>> {
-        if !util::validate(name, conn).await? {
+    pub async fn try_new<T>(name: T, conn: &'a SyncConnection) -> Result<Player<'a>>
+    where
+        T: AsRef<str> + Display,
+    {
+        if !util::validate(name.as_ref(), conn).await? {
             return Err(Box::from("The provided player was invalid."));
         }
 
-        let player = Player { name, conn };
+        let player = Player {
+            name: name.to_string(),
+            conn,
+        };
         Ok(player)
     }
 
     #[doc(hidden)]
-    pub fn get_proxy(&mut self) -> Result<Proxy<&'b SyncConnection>> {
+    pub fn get_proxy(&mut self) -> Result<Proxy<&'a SyncConnection>> {
         let proxy = Proxy::new(
             format!("org.mpris.MediaPlayer2.{}", self.name),
             "/org/mpris/MediaPlayer2",

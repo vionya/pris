@@ -1,9 +1,17 @@
+use crate::{Player, Result};
 use dbus::nonblock::{Proxy, SyncConnection};
-use std::{error::Error, time::Duration};
+use dbus_tokio::connection;
+use std::{sync::Arc, time::Duration};
 
 const MPRIS_PREFIX: &str = "org.mpris.MediaPlayer2.";
 
-pub async fn validate(player_name: &str, conn: &SyncConnection) -> Result<bool, Box<dyn Error>> {
+pub async fn validate(player_name: &str, conn: &SyncConnection) -> Result<bool> {
+    Ok(get_all_names(&conn)
+        .await?
+        .contains(&player_name.to_string()))
+}
+
+async fn get_all_names(conn: &SyncConnection) -> Result<Vec<String>> {
     let proxy = Proxy::new("org.freedesktop.DBus", "/", Duration::from_secs(1), conn);
     let (services,): (Vec<String>,) = proxy
         .method_call("org.freedesktop.DBus", "ListNames", ())
@@ -16,6 +24,37 @@ pub async fn validate(player_name: &str, conn: &SyncConnection) -> Result<bool, 
                 .map_or_else(|| None, |s| Some(s.to_string()))
         })
         .collect();
+    Ok(active_players)
+}
 
-    Ok(active_players.contains(&player_name.to_string()))
+/// Establishes a connection to the `DBus`.
+/// Use this to create a connection to pass into `Player`
+pub fn get_connection() -> Arc<SyncConnection> {
+    let (resource, conn) = connection::new_session_sync().unwrap();
+
+    tokio::spawn(async {
+        let err = resource.await;
+        panic!("Lost connection to D-Bus: {}", err);
+    });
+
+    conn
+}
+
+/// Gets a `Vec` of [`Player`](crate::Player)s from all active
+/// MPRIS players found on the `DBus`.
+///
+/// # Errors
+/// May return an `Err` variant if there was a failure in
+/// getting a list of names from `DBus`.
+pub async fn get_all_players<'a>(conn: &'a SyncConnection) -> Result<Vec<Player<'_>>> {
+    let mut players: Vec<Player<'a>> = Vec::new();
+
+    for name in get_all_names(&conn).await? {
+        match Player::try_new(name, &conn).await {
+            Ok(player) => players.push(player),
+            Err(_) => continue,
+        };
+    }
+
+    Ok(players)
 }

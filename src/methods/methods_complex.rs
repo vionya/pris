@@ -9,7 +9,7 @@ use std::time::Duration;
 
 /// Retrieves a metadata property from the given player.
 pub async fn get_metadata_property(
-    player: &mut Player<'_, '_>,
+    player: &mut Player<'_>,
     property: &str,
 ) -> Result<Box<dyn RefArg>> {
     let proxy = player.get_proxy()?;
@@ -38,7 +38,7 @@ where
 /// Available properties can be seen [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-pub async fn set_property<T>(player: &mut Player<'_, '_>, property: &str, value: T) -> Result<()>
+pub async fn set_property<T>(player: &mut Player<'_>, property: &str, value: T) -> Result<()>
 where
     T: Arg + Append,
 {
@@ -49,7 +49,7 @@ where
 }
 
 /// Seeks the position of the active track.
-pub async fn seek(player: &mut Player<'_, '_>, offset: Duration) -> Result<()> {
+pub async fn seek(player: &mut Player<'_>, offset: Duration) -> Result<()> {
     let proxy = player.get_proxy()?;
     let offset = offset.as_micros() as i64;
     proxy.method_call(INTERFACE, "Seek", (offset,)).await?;
@@ -58,7 +58,7 @@ pub async fn seek(player: &mut Player<'_, '_>, offset: Duration) -> Result<()> {
 }
 
 /// Same as `seek`, but in reverse.
-pub async fn seek_reverse(player: &mut Player<'_, '_>, offset: Duration) -> Result<()> {
+pub async fn seek_reverse(player: &mut Player<'_>, offset: Duration) -> Result<()> {
     let proxy = player.get_proxy()?;
     let offset = offset.as_micros() as i64;
     proxy.method_call(INTERFACE, "Seek", (-offset,)).await?;
@@ -67,7 +67,7 @@ pub async fn seek_reverse(player: &mut Player<'_, '_>, offset: Duration) -> Resu
 }
 
 /// Sets the position of the current track, by microseconds.
-pub async fn set_position(player: &mut Player<'_, '_>, position: i64) -> Result<()> {
+pub async fn set_position(player: &mut Player<'_>, position: i64) -> Result<()> {
     let mut player_clone = player.clone();
 
     let proxy = player.get_proxy()?;
@@ -85,7 +85,7 @@ pub async fn set_position(player: &mut Player<'_, '_>, position: i64) -> Result<
 }
 
 /// Opens a track by its URI.
-pub async fn open_uri(player: &mut Player<'_, '_>, uri: &str) -> Result<()> {
+pub async fn open_uri(player: &mut Player<'_>, uri: &str) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "OpenUri", (uri,)).await?;
 
