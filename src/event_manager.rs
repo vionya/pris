@@ -1,3 +1,4 @@
+use crate::Result as DefaultResult;
 use dbus::{
     channel::Token,
     message::{MatchRule, Message},
@@ -88,7 +89,7 @@ impl EventManager<'_> {
     /// # Errors
     /// Returns an `Err` if there is a failure in removing
     /// a match from the connection.
-    pub async fn clear_callbacks(&mut self) -> EmptyResult {
+    pub async fn clear_callbacks(&mut self) -> DefaultResult<()> {
         for token in &self.callback_tokens {
             self.conn.remove_match(*token).await?;
         }

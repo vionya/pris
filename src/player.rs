@@ -1,13 +1,9 @@
-#![allow(clippy::needless_lifetimes)]
-
-use crate::{methods, util};
+use crate::{methods, util, Result};
 use dbus::{
     arg::{Append, Arg, Get, RefArg},
     nonblock::{Proxy, SyncConnection},
 };
-use std::{error::Error, time::Duration};
-
-type Result<T> = std::result::Result<T, Box<dyn Error>>;
+use std::time::Duration;
 
 /// A struct used to control an MPRIS player.
 #[derive(Clone)]
@@ -81,10 +77,10 @@ impl<'a, 'b> Player<'a, 'b> {
     /// Available properties can be seen [here].
     ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-    pub async fn get_property<T: for<'c> Get<'c> + 'static>(
-        &mut self,
-        property: &str,
-    ) -> Result<T> {
+    pub async fn get_property<T>(&mut self, property: &str) -> Result<T>
+    where
+        T: for<'c> Get<'c> + 'static,
+    {
         Ok(methods::get_property(self, property).await?)
     }
 
@@ -92,7 +88,10 @@ impl<'a, 'b> Player<'a, 'b> {
     /// Available properties can be seen [here].
     ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-    pub async fn set_property<T: Arg + Append>(&mut self, property: &str, value: T) -> Result<()> {
+    pub async fn set_property<T>(&mut self, property: &str, value: T) -> Result<()>
+    where
+        T: Arg + Append,
+    {
         Ok(methods::set_property(self, property, value).await?)
     }
 

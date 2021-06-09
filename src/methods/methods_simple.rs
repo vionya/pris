@@ -1,8 +1,5 @@
-use crate::Player;
-
-const INTERFACE: &str = "org.mpris.MediaPlayer2.Player";
-
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+use super::INTERFACE;
+use crate::{Player, Result};
 
 /// Skips to the next track
 pub async fn next(player: &mut Player<'_, '_>) -> Result<()> {

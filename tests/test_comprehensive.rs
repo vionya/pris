@@ -7,8 +7,8 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
     let mut manager = EventManager::new(&conn);
 
     let _incoming = manager
-        .add_callback(EventType::PropertiesChanged, |msg, (source,): (String,)| {
-            println!("From: {:?}\nData: {:?}", source, msg);
+        .add_callback(EventType::PropertiesChanged, |msg| {
+            println!("Data: {:?}", msg);
             true
         })
         .await?;

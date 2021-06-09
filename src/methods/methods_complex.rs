@@ -1,14 +1,11 @@
-use crate::Player;
+use super::INTERFACE;
+use crate::{Player, Result};
 use dbus::nonblock::stdintf::org_freedesktop_dbus::Properties;
 use dbus::{
     arg::{Append, Arg, Get, PropMap, RefArg},
     strings::Path,
 };
 use std::time::Duration;
-
-const INTERFACE: &str = "org.mpris.MediaPlayer2.Player";
-
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 /// Retrieves a metadata property from the given player.
 pub async fn get_metadata_property(
@@ -27,10 +24,10 @@ pub async fn get_metadata_property(
 /// Available properties can be seen [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-pub async fn get_property<T: for<'a> Get<'a> + 'static>(
-    player: &mut Player<'_, '_>,
-    property: &str,
-) -> Result<T> {
+pub async fn get_property<T>(player: &mut Player<'_, '_>, property: &str) -> Result<T>
+where
+    T: for<'a> Get<'a> + 'static,
+{
     let proxy = player.get_proxy()?;
     let value: T = proxy.get(INTERFACE, property).await?;
 
@@ -41,11 +38,10 @@ pub async fn get_property<T: for<'a> Get<'a> + 'static>(
 /// Available properties can be seen [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-pub async fn set_property<T: Arg + Append>(
-    player: &mut Player<'_, '_>,
-    property: &str,
-    value: T,
-) -> Result<()> {
+pub async fn set_property<T>(player: &mut Player<'_, '_>, property: &str, value: T) -> Result<()>
+where
+    T: Arg + Append,
+{
     let proxy = player.get_proxy()?;
     proxy.set(INTERFACE, property, value).await?;
 
