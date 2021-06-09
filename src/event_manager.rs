@@ -1,13 +1,10 @@
 use dbus::{
-    arg::ReadAll,
     channel::Token,
     message::{MatchRule, Message},
     nonblock::{MsgMatch, SyncConnection},
     strings::{Member, Path},
 };
 use std::error::Error;
-
-type EmptyResult = std::result::Result<(), Box<dyn Error>>;
 
 /// Enum for indicating which type of MPRIS event to listen
 /// for.
@@ -42,6 +39,10 @@ impl EventManager<'_> {
 
     /// Adds a new callback to the event manager.
     ///
+    /// Callbacks can be provided either as a closure, or as
+    /// a function. A callback takes only one parameter, a
+    /// [`Message`](crate::Message).
+    ///
     /// # Errors
     /// Returns an `Err` if there is a failure in adding
     /// a match rule to the connection.
@@ -51,19 +52,19 @@ impl EventManager<'_> {
     /// let mut manager = EventManager::new(&connection);
     /// // Be advised that it is important that this is assigned to a variable
     /// let _incoming = manager
-    ///     .add_callback(EventType::PropertiesChanged, |msg, (source,): (String,)| {
-    ///         println!("From: {:?}\nData: {:?}", source, msg);
+    ///     .add_callback(EventType::PropertiesChanged, |msg| {
+    ///         println!("Data: {:?}", msg);
     ///         true
     ///     })
     ///     .await?;
     /// ```
-    pub async fn add_callback<R: 'static>(
+    pub async fn add_callback<F>(
         &mut self,
         event_type: EventType,
-        callback: fn(Message, R) -> bool,
+        mut callback: F,
     ) -> Result<MsgMatch, Box<dyn Error>>
     where
-        R: ReadAll,
+        F: FnMut(Message) -> bool + Send + 'static,
     {
         let mut rule = MatchRule::new();
         rule.member = Some(Member::new(match event_type {
@@ -73,7 +74,10 @@ impl EventManager<'_> {
         rule.path = Some(Path::new("/org/mpris/MediaPlayer2")?);
 
         let msg_match = self.conn.add_match(rule).await?;
-        let registered_callback = msg_match.cb(callback);
+        let registered_callback = msg_match.cb(move |msg, _: ()| {
+            callback(msg);
+            true
+        });
         self.callback_tokens.push(registered_callback.token());
 
         Ok(registered_callback)
