@@ -45,33 +45,51 @@ impl<'a> Player<'a> {
     }
 
     /// Skips to the next track
-    pub async fn next(&mut self) {
-        methods::next(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn next(&mut self) -> Result<()> {
+        Ok(methods::next(self).await?)
     }
 
     /// Skips to the previous track
-    pub async fn previous(&mut self) {
-        methods::previous(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn previous(&mut self) -> Result<()> {
+        Ok(methods::previous(self).await?)
     }
 
     /// Pauses the current track
-    pub async fn pause(&mut self) {
-        methods::pause(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn pause(&mut self) -> Result<()> {
+        Ok(methods::pause(self).await?)
     }
 
     /// Starts or resumes the current track
-    pub async fn play(&mut self) {
-        methods::play(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn play(&mut self) -> Result<()> {
+        Ok(methods::play(self).await?)
     }
 
     /// Resumes/starts or pauses the current track
-    pub async fn play_pause(&mut self) {
-        methods::play_pause(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn play_pause(&mut self) -> Result<()> {
+        Ok(methods::play_pause(self).await?)
     }
 
     /// Stops playback
-    pub async fn stop(&mut self) {
-        methods::stop(self).await.unwrap();
+    ///
+    /// # Errors
+    /// Will `Err` if the `Player` has closed.
+    pub async fn stop(&mut self) -> Result<()> {
+        Ok(methods::stop(self).await?)
     }
 
     /// Retrieves a metadata property from the given player.

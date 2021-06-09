@@ -13,7 +13,7 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
         })
         .await?;
 
-    player.play_pause().await;
+    player.play_pause().await?;
 
     println!("{:?}", player.get_metadata_property("xesam:title").await?);
     tokio::signal::ctrl_c().await?;
