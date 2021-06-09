@@ -75,10 +75,7 @@ impl EventManager<'_> {
         rule.path = Some(Path::new("/org/mpris/MediaPlayer2")?);
 
         let msg_match = self.conn.add_match(rule).await?;
-        let registered_callback = msg_match.cb(move |msg, _: ()| {
-            callback(msg);
-            true
-        });
+        let registered_callback = msg_match.cb(move |msg, _: ()| callback(msg));
         self.callback_tokens.push(registered_callback.token());
 
         Ok(registered_callback)
