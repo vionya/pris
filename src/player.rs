@@ -75,14 +75,22 @@ impl<'a> Player<'a> {
     }
 
     /// Retrieves a metadata property from the given player.
+    ///
+    /// # Errors
+    /// May return an `Err` variant if the provided property was invalid.
     pub async fn get_metadata_property(&mut self, property: &str) -> Result<Box<dyn RefArg>> {
         Ok(methods::get_metadata_property(self, property).await?)
     }
 
     /// Retrieves the value of an MPRIS property.
-    /// Available properties can be seen [here].
+    /// Available properties can be found [here].
     ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
+    ///
+    /// # Errors
+    /// May return an `Err` variant if:
+    /// * An invalid type was provided for the property
+    /// * An invalid property was provided
     pub async fn get_property<T>(&mut self, property: &str) -> Result<T>
     where
         T: for<'c> Get<'c> + 'static,
@@ -91,9 +99,14 @@ impl<'a> Player<'a> {
     }
 
     /// Sets the value of a writable MPRIS property.
-    /// Available properties can be seen [here].
+    /// Available properties can be found [here].
     ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
+    ///
+    /// # Errors
+    /// May return an `Err` variant if:
+    /// * An invalid type was provided for the property
+    /// * An invalid property was provided
     pub async fn set_property<T>(&mut self, property: &str, value: T) -> Result<()>
     where
         T: Arg + Append,
@@ -117,6 +130,9 @@ impl<'a> Player<'a> {
     }
 
     /// Opens a track by its URI.
+    ///
+    /// # Errors
+    /// May return an `Err` variant if the provided URI is invalid.
     pub async fn open_uri(&mut self, uri: &str) -> Result<()> {
         Ok(methods::open_uri(self, uri).await?)
     }

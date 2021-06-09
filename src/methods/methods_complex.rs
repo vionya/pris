@@ -8,6 +8,9 @@ use dbus::{
 use std::time::Duration;
 
 /// Retrieves a metadata property from the given player.
+/// 
+/// # Errors
+/// May return an `Err` variant if the provided property was invalid.
 pub async fn get_metadata_property(
     player: &mut Player<'_>,
     property: &str,
@@ -21,10 +24,15 @@ pub async fn get_metadata_property(
 }
 
 /// Retrieves the value of an MPRIS property.
-/// Available properties can be seen [here].
+/// Available properties can be found [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-pub async fn get_property<T>(player: &mut Player<'_, '_>, property: &str) -> Result<T>
+/// 
+/// # Errors
+/// May return an `Err` variant if:
+/// * An invalid type was provided for the property
+/// * An invalid property was provided
+pub async fn get_property<T>(player: &mut Player<'_>, property: &str) -> Result<T>
 where
     T: for<'a> Get<'a> + 'static,
 {
@@ -35,9 +43,14 @@ where
 }
 
 /// Sets the value of a writable MPRIS property.
-/// Available properties can be seen [here].
+/// Available properties can be found [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
+/// 
+/// # Errors
+/// May return an `Err` variant if:
+/// * An invalid type was provided for the property
+/// * An invalid property was provided
 pub async fn set_property<T>(player: &mut Player<'_>, property: &str, value: T) -> Result<()>
 where
     T: Arg + Append,
@@ -85,6 +98,9 @@ pub async fn set_position(player: &mut Player<'_>, position: i64) -> Result<()> 
 }
 
 /// Opens a track by its URI.
+/// 
+/// # Errors
+/// May return an `Err` variant if the provided URI is invalid.
 pub async fn open_uri(player: &mut Player<'_>, uri: &str) -> Result<()> {
     let proxy = player.get_proxy()?;
     proxy.method_call(INTERFACE, "OpenUri", (uri,)).await?;
