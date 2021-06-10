@@ -1,6 +1,6 @@
 use crate::{Player, Result};
 use dbus::{
-    arg::{PropMap, RefArg},
+    arg::PropMap,
     nonblock::{Proxy, SyncConnection},
 };
 use dbus_tokio::connection;
@@ -49,8 +49,8 @@ pub fn get_connection() -> Arc<SyncConnection> {
 /// # Errors
 /// May return an `Err` variant if there was a failure in
 /// getting a list of names from `DBus`.
-pub async fn get_all_players<'a>(conn: &'a SyncConnection) -> Result<Vec<Player<'_>>> {
-    let mut players: Vec<Player<'a>> = Vec::new();
+pub async fn get_all_players(conn: &SyncConnection) -> Result<Vec<Player<'_>>> {
+    let mut players: Vec<Player<'_>> = Vec::new();
 
     for name in get_all_names(&conn).await? {
         match Player::try_new(name, &conn).await {
