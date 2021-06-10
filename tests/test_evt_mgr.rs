@@ -1,4 +1,4 @@
-use empress::{get_connection, EventManager, EventType, Message};
+use empress::{self, EventManager, EventType, Message};
 
 // A callback can be a detached function...
 fn callback(msg: Message) -> bool {
@@ -8,7 +8,7 @@ fn callback(msg: Message) -> bool {
 
 #[tokio::test]
 async fn test_evt_mgr() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = get_connection();
+    let conn = empress::get_connection();
     let mut manager = EventManager::new(&conn);
 
     let _incoming_props = manager

@@ -1,5 +1,5 @@
 use super::INTERFACE;
-use crate::{prop_cast, Player, Result};
+use crate::{Player, Result};
 use dbus::nonblock::stdintf::org_freedesktop_dbus::Properties;
 use dbus::{
     arg::{Append, Arg, Get, PropMap},
@@ -81,7 +81,7 @@ pub async fn set_position(player: &mut Player<'_>, position: i64) -> Result<()> 
 
     let proxy = player.get_proxy()?;
     let metadata = get_metadata(&mut player_clone).await?;
-    let track_id: &String = prop_cast(&metadata, "mpris:trackid").unwrap();
+    let track_id: &String = crate::prop_cast(&metadata, "mpris:trackid").unwrap();
 
     proxy
         .method_call(INTERFACE, "SetPosition", (Path::from(track_id), position))
