@@ -1,5 +1,8 @@
 use crate::{Player, Result};
-use dbus::nonblock::{Proxy, SyncConnection};
+use dbus::{
+    arg::{PropMap, RefArg},
+    nonblock::{Proxy, SyncConnection},
+};
 use dbus_tokio::connection;
 use std::{sync::Arc, time::Duration};
 
@@ -28,7 +31,7 @@ async fn get_all_names(conn: &SyncConnection) -> Result<Vec<String>> {
 }
 
 /// Establishes a connection to the `DBus`.
-/// Use this to create a connection to pass into `Player`
+/// Use this to create a connection to pass into `Player`.
 pub fn get_connection() -> Arc<SyncConnection> {
     let (resource, conn) = connection::new_session_sync().unwrap();
 
@@ -57,4 +60,22 @@ pub async fn get_all_players<'a>(conn: &'a SyncConnection) -> Result<Vec<Player<
     }
 
     Ok(players)
+}
+
+/// Gets a value from a HashMap, and casts it to the
+/// type provided.
+///
+/// # Example
+/// ```
+/// let metadata = player.get_metadata().await?;
+/// let title = match prop_cast::<String>(&metadata, "xesam:title") {
+///     Some(t) => t.to_string(),
+///     None => "Unknown title".to_string()
+/// };
+/// ```
+pub fn prop_cast<'a, T>(map: &'a PropMap, key: &str) -> Option<&'a T>
+where
+    T: 'static,
+{
+    map.get(key).and_then(|v| v.0.as_any().downcast_ref())
 }

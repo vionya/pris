@@ -9,7 +9,10 @@ async fn test_methods() -> Result<(), Box<dyn std::error::Error>> {
     //     .await?;
 
     let metadata = player.get_metadata().await?;
-    let title: &String = prop_cast(&metadata, "xesam:title").unwrap();
+    let title = match prop_cast::<String>(&metadata, "xesam:title") {
+        Some(t) => t.to_string(),
+        None => "Unknown title".to_string()
+    };
     println!("{}", title);
 
     Ok(())
