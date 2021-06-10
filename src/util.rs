@@ -40,7 +40,7 @@ pub fn get_connection() -> Arc<SyncConnection> {
     conn
 }
 
-/// Gets a `Vec` of [`Player`](crate::Player)s from all active
+/// Gets a `Vec` of `Player`s from all active
 /// MPRIS players found on the `DBus`.
 ///
 /// # Errors

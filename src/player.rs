@@ -92,12 +92,12 @@ impl<'a> Player<'a> {
         Ok(methods::stop(self).await?)
     }
 
-/// Retrieves track metadata from the `Player`.
-/// The [`prop_cast`](crate::prop_cast) function may be used
-/// to get specific values out of the resulting metadata.
-///
-/// # Errors
-/// May `Err` if there is a failure in getting the metadata.
+    /// Retrieves track metadata from the `Player`.
+    /// The [`prop_cast`](crate::prop_cast) function may be used
+    /// to get specific values out of the resulting metadata.
+    ///
+    /// # Errors
+    /// May `Err` if there is a failure in getting the metadata.
     pub async fn get_metadata(&mut self) -> Result<PropMap> {
         Ok(methods::get_metadata(self).await?)
     }
