@@ -13,7 +13,7 @@ pub enum EventType {
     /// Emitted whenever properties change.
     /// A list of all properties that will
     /// cause this to be emitted can be found
-    /// [here]
+    /// [here].
     ///
     /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
     PropertiesChanged,

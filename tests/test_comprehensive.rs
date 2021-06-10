@@ -1,4 +1,4 @@
-use empress::{get_connection, EventManager, EventType, Player};
+use empress::{get_connection, prop_cast, EventManager, EventType, Player};
 
 #[tokio::test]
 async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,8 +14,9 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
     player.play_pause().await?;
+    let metadata = player.get_metadata().await?;
 
-    println!("{:?}", player.get_metadata_property("xesam:title").await?);
+    println!("{}", prop_cast::<String>(&metadata, "xesam:title").unwrap());
     tokio::signal::ctrl_c().await?;
     manager.clear_callbacks().await?;
 

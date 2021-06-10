@@ -1,6 +1,6 @@
 use crate::{methods, util, Result};
 use dbus::{
-    arg::{Append, Arg, Get, RefArg},
+    arg::{Append, Arg, Get, PropMap},
     nonblock::{Proxy, SyncConnection},
 };
 use std::{fmt::Display, time::Duration};
@@ -92,12 +92,14 @@ impl<'a> Player<'a> {
         Ok(methods::stop(self).await?)
     }
 
-    /// Retrieves a metadata property from the given player.
-    ///
-    /// # Errors
-    /// May return an `Err` variant if the provided property was invalid.
-    pub async fn get_metadata_property(&mut self, property: &str) -> Result<Box<dyn RefArg>> {
-        Ok(methods::get_metadata_property(self, property).await?)
+/// Retrieves track metadata from the `Player`.
+/// The [`prop_cast`](crate::prop_cast) function may be used
+/// to get specific values out of the resulting metadata.
+///
+/// # Errors
+/// May `Err` if there is a failure in getting the metadata.
+    pub async fn get_metadata(&mut self) -> Result<PropMap> {
+        Ok(methods::get_metadata(self).await?)
     }
 
     /// Retrieves the value of an MPRIS property.

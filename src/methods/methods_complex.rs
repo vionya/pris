@@ -1,33 +1,29 @@
 use super::INTERFACE;
-use crate::{Player, Result};
+use crate::{prop_cast, Player, Result};
 use dbus::nonblock::stdintf::org_freedesktop_dbus::Properties;
 use dbus::{
-    arg::{Append, Arg, Get, PropMap, RefArg},
+    arg::{Append, Arg, Get, PropMap},
     strings::Path,
 };
 use std::time::Duration;
 
-/// Retrieves a metadata property from the given player.
-/// 
+/// Retrieves track metadata from a `Player`.
+/// The [`prop_cast`](crate::prop_cast) function may be used
+/// to get specific values out of the resulting metadata.
+///
 /// # Errors
-/// May return an `Err` variant if the provided property was invalid.
-pub async fn get_metadata_property(
-    player: &mut Player<'_>,
-    property: &str,
-) -> Result<Box<dyn RefArg>> {
+/// May `Err` if there is a failure in getting the metadata.
+pub async fn get_metadata(player: &mut Player<'_>) -> Result<PropMap> {
     let proxy = player.get_proxy()?;
-    let mut metadata: PropMap = proxy.get(INTERFACE, "Metadata").await?;
-
-    let prop = metadata.remove(property).unwrap();
-
-    Ok(prop.0)
+    let metadata: PropMap = proxy.get(INTERFACE, "Metadata").await?;
+    Ok(metadata)
 }
 
 /// Retrieves the value of an MPRIS property.
 /// Available properties can be found [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-/// 
+///
 /// # Errors
 /// May return an `Err` variant if:
 /// * An invalid type was provided for the property
@@ -46,7 +42,7 @@ where
 /// Available properties can be found [here].
 ///
 /// [here]: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus
-/// 
+///
 /// # Errors
 /// May return an `Err` variant if:
 /// * An invalid type was provided for the property
@@ -84,21 +80,18 @@ pub async fn set_position(player: &mut Player<'_>, position: i64) -> Result<()> 
     let mut player_clone = player.clone();
 
     let proxy = player.get_proxy()?;
-    let track_id = get_metadata_property(&mut player_clone, "mpris:trackid").await?;
+    let metadata = get_metadata(&mut player_clone).await?;
+    let track_id: &String = prop_cast(&metadata, "mpris:trackid").unwrap();
 
     proxy
-        .method_call(
-            INTERFACE,
-            "SetPosition",
-            (Path::from(track_id.as_str().unwrap()), position),
-        )
+        .method_call(INTERFACE, "SetPosition", (Path::from(track_id), position))
         .await?;
 
     Ok(())
 }
 
 /// Opens a track by its URI.
-/// 
+///
 /// # Errors
 /// May return an `Err` variant if the provided URI is invalid.
 pub async fn open_uri(player: &mut Player<'_>, uri: &str) -> Result<()> {
