@@ -9,7 +9,7 @@ use std::{fmt::Display, time::Duration};
 #[derive(Clone)]
 pub struct Player<'a> {
     pub name: String,
-    pub conn: &'a SyncConnection,
+    conn: &'a SyncConnection,
 }
 
 impl<'a> Player<'a> {
