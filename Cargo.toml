@@ -1,8 +1,13 @@
 [package]
-name = "empress"
+name = "empris"
 version = "0.1.0"
 authors = ["sardonicism-04 <110789901+sardonicism-04@users.noreply.github.com>"]
 edition = "2018"
+description = "A library for interfacing with players compatible with the MPRIS DBus specification."
+readme = "README.md"
+repository = "https://github.com/sardonicism-04/empris"
+license = "MIT"
+keywords = ["dbus", "mpris", "ipc"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
