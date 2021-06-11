@@ -81,10 +81,10 @@ pub async fn set_position(player: &mut Player<'_>, position: i64) -> Result<()> 
 
     let proxy = player.get_proxy()?;
     let metadata = get_metadata(&mut player_clone).await?;
-    let track_id: &String = crate::prop_cast(&metadata, "mpris:trackid").unwrap();
+    let track_id: &Path = crate::prop_cast(&metadata, "mpris:trackid").unwrap();
 
     proxy
-        .method_call(INTERFACE, "SetPosition", (Path::from(track_id), position))
+        .method_call(INTERFACE, "SetPosition", (track_id, position))
         .await?;
 
     Ok(())

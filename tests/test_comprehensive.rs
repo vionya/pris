@@ -13,7 +13,7 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
         })
         .await?;
 
-    player.play_pause().await?;
+    player.set_position(456).await?;
     let metadata = player.get_metadata().await?;
 
     println!(
