@@ -1,8 +1,8 @@
-use empris::{self, EventManager, EventType, Player};
+use pris::{self, EventManager, EventType, Player};
 
 #[tokio::test]
 async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = empris::get_connection();
+    let conn = pris::get_connection();
     let mut player = Player::try_new("cmus", &conn).await?;
     let mut manager = EventManager::new(&conn);
 
@@ -18,7 +18,7 @@ async fn test_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
 
     println!(
         "{}",
-        empris::prop_cast::<String>(&metadata, "xesam:title").unwrap()
+        pris::prop_cast::<String>(&metadata, "xesam:title").unwrap()
     );
     tokio::signal::ctrl_c().await?;
     manager.clear_callbacks().await?;

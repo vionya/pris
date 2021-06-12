@@ -1,4 +1,4 @@
-use empris::{self, EventManager, EventType, Message};
+use pris::{self, EventManager, EventType, Message};
 
 // A callback can be a detached function...
 fn callback(msg: Message) -> bool {
@@ -8,7 +8,7 @@ fn callback(msg: Message) -> bool {
 
 #[tokio::test]
 async fn test_evt_mgr() -> Result<(), Box<dyn std::error::Error>> {
-    let conn = empris::get_connection();
+    let conn = pris::get_connection();
     let mut manager = EventManager::new(&conn);
 
     let _incoming_props = manager

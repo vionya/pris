@@ -7,12 +7,12 @@
 //! 
 //! # A basic player controller
 //! ```
-//! use empris::{self, Player};
+//! use pris::{self, Player};
 //! 
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     // Create a connection to work with
-//!     let conn = empris::get_connection();
+//!     let conn = pris::get_connection();
 //!     // Get a player under the name "vlc"
 //!     let player = Player::try_new("vlc", &conn).await?;
 //!     // Play/pause the player
