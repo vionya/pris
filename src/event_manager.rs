@@ -22,7 +22,7 @@ pub enum EventType {
 }
 
 /// A struct that simplifies the process of adding
-/// and removing listeners and callbacks to/from MPRIS's
+/// and removing listeners and callbacks to/from MPRIS
 /// `DBus` signals.
 pub struct EventManager<'a> {
     conn: &'a SyncConnection,
